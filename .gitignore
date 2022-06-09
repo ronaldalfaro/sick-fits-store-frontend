@@ -1,0 +1,9 @@
+.DS_STORE
+node_modules
+.next
+package-lock.json
+
+/.pnp
+.pnp.js
+
+/build

@@ -123,5 +123,6 @@
         ]
       }
     }
-  }
+  },
+  "repository": "https://github.com/ronaldalfaro/sick-fits-store-frontend"
 }

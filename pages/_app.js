@@ -1,5 +1,4 @@
 import NProgress from 'nprogress';
-import withApollo from 'next-with-apollo';
 import { any } from 'prop-types';
 import Router from 'next/router';
 import { ApolloClient, ApolloProvider } from '@apollo/client';

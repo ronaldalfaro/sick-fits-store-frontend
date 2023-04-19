@@ -1,57 +1,60 @@
 import { useMutation } from '@apollo/client';
 import gql from 'graphql-tag';
+import { string } from 'prop-types';
 import useForm from '../lib/useForm';
 import Form from './styles/Form';
 import Error from './ErrorMessage';
 import { CURRENT_USER_QUERY } from './User';
 
-const SIGNIN_MUTATION = gql`
-  mutation SIGNIN_MUTATION($email: String!, $password: String!) {
-    authenticateUserWithPassword(email: $email, password: $password) {
-      ... on UserAuthenticationWithPasswordSuccess {
-        item {
-          id
-          email
-          name
-        }
-      }
-      ... on UserAuthenticationWithPasswordFailure {
-        code
-        message
-      }
+const RESET_MUTATION = gql`
+  mutation RESET_MUTATION(
+    $email: String!
+    $password: String!
+    $token: String!
+  ) {
+    redeemUserPasswordResetToken(
+      email: $email
+      token: $token
+      password: $password
+    ) {
+      code
+      message
     }
   }
 `;
 
-export default function SignIn() {
+export default function Reset({ token }) {
   const { inputs, handleChange, resetForm } = useForm({
     email: '',
     password: '',
+    token,
   });
 
-  const [signin, { data, loading }] = useMutation(SIGNIN_MUTATION, {
+  const [signup, { data, loading, error }] = useMutation(RESET_MUTATION, {
     variables: inputs,
-    refetchQueries: [{ query: CURRENT_USER_QUERY }],
+    // refetchQueries: [{ query: CURRENT_USER_QUERY }],
   });
+
+  const successfulError = data?.redeemUserPasswordResetToken?.code
+    ? data?.redeemUserPasswordResetToken
+    : undefined;
 
   async function handleSubmit(e) {
     e.preventDefault();
-    console.log(inputs);
-    const res = await signin();
+    const res = await signup().catch(console.error);
     console.log(res);
     resetForm();
   }
-  const error =
-    data?.authenticateUserWithPassword.__typename ===
-    'UserAuthenticationWithPasswordFailure'
-      ? data?.authenticateUserWithPassword
-      : undefined;
 
   return (
     <Form method="POST" onSubmit={handleSubmit}>
-      <h2>Sign in into your account</h2>
-      <Error error={error} />
+      <h2>Reset your password</h2>
+      <Error error={successfulError || error} />
       <fieldset>
+        {data?.redeemUserPasswordResetToken === null && (
+          <p>Success! You can now Sign in!</p>
+        )}
+
         <label htmlFor="email">
           Email
           <input
@@ -74,8 +77,12 @@ export default function SignIn() {
             onChange={handleChange}
           />
         </label>
-        <button type="submit">Sign in!</button>
+        <button type="submit">Reset</button>
       </fieldset>
     </Form>
   );
 }
+
+Reset.propTypes = {
+  token: string,
+};

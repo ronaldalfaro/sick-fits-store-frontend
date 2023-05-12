@@ -32,7 +32,7 @@ export default function Reset({ token }) {
 
   const [signup, { data, loading, error }] = useMutation(RESET_MUTATION, {
     variables: inputs,
-    // refetchQueries: [{ query: CURRENT_USER_QUERY }],
+    refetchQueries: [{ query: CURRENT_USER_QUERY }],
   });
 
   const successfulError = data?.redeemUserPasswordResetToken?.code

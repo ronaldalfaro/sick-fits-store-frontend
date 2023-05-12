@@ -22,7 +22,7 @@ export default function Pagination({ page }) {
   const pageCount = Math.ceil(count / perPage);
 
   useEffect(() => {
-    setCount(data._allProductsMeta.count);
+    if (data && data._allProductsMeta) setCount(data._allProductsMeta.count);
   }, [data]);
 
   // eslint-disable-next-line no-nested-ternary

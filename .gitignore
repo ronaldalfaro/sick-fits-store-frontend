@@ -7,3 +7,5 @@ package-lock.json
 .pnp.js
 
 /build
+
+.env.local

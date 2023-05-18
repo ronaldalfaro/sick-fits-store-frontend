@@ -1,9 +1,9 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import { useRouter } from 'next/router';
 import { useLazyQuery } from '@apollo/client';
 import { resetIdCounter, useCombobox } from 'downshift';
 import gql from 'graphql-tag';
 import debounce from 'lodash.debounce';
+import { useRouter } from 'next/dist/client/router';
 import { DropDown, DropDownItem, SearchStyles } from './styles/DropDown';
 
 const SEARCH_PRODUCTS_QUERY = gql`
@@ -49,7 +49,6 @@ export default function Search() {
   } = useCombobox({
     items,
     onInputValueChange() {
-      // console.log(`onInputValueChange ${newValue}`);
       findItemsButChill({
         variables: {
           searchTerm: inputValue,
@@ -57,13 +56,11 @@ export default function Search() {
       });
     },
     onSelectedItemChange({ selectedItem }) {
-      console.log(selectedItem);
-      console.log('selected item changed');
       router.push({
         pathname: `/product/${selectedItem.id}`,
       });
     },
-    itemToString: (item) => item?.nane || '',
+    itemToString: (item) => item?.name || '',
   });
   return (
     <SearchStyles>
@@ -81,9 +78,9 @@ export default function Search() {
         {isOpen &&
           items.map((item, index) => (
             <DropDownItem
-              highlighted={index === highlightedIndex}
+              {...getItemProps({ item, index })}
               key={item.id}
-              {...getItemProps({ item })}
+              highlighted={index === highlightedIndex}
             >
               <img
                 src={item.photo.image.publicUrlTransformed}
